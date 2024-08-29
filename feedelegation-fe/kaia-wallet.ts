@@ -1,0 +1,5 @@
+export default `<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="50" r="50" fill="black"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M33.2745 33L44.2553 67.2515L45.317 63.943L35.397 33H39.0735L47.156 58.2101L48.2151 54.9015L41.196 33H44.8725L50.0541 49.166L55.2391 33H82L69.1748 73H42.414L42.4188 72.9871L29.598 33H33.2745ZM27.4755 33L40.3007 73H36.6242L23.799 33H27.4755ZM21.6765 33L34.5017 73H30.8252L18 33H21.6765Z" fill="#BFF009"/>
+</svg>
+`

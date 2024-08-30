@@ -4,10 +4,10 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 import { contractAddress } from "../constants/address";
-import { abi } from "../constants/abi";
+
+const { Web3, TxType } = require("@kaiachain/web3js-ext");
 
 import { useConnectWallet } from "@web3-onboard/react";
-import { ethers } from "ethers";
 
 const buttonStyles = {
   borderRadius: "6px",
@@ -27,36 +27,39 @@ export default function Home() {
 
   const [txHash, setTxHash] = useState("");
 
-  // create an ethers provider
-  // @ts-ignore
-  let ethersProvider;
+  // Create a Web3 provider instance
+  let web3Provider;
 
   if (wallet) {
-    ethersProvider = new ethers.providers.Web3Provider(wallet.provider, "any");
+    web3Provider = new Web3(wallet.provider);
   }
 
   async function mintNFT() {
     console.log("====== Minting Wave Form NFT ======");
 
+    const accounts = await web3Provider.eth.getAccounts();
+    const account = accounts[0];
+    console.log("Using account:", account);
 
-    // @ts-ignore
-    if (!ethersProvider) {
-      console.log("provider not initialized yet");
-      return;
-    }
-    const signer = await ethersProvider.getSigner();
-    console.log(signer);
-    
-    const contract = new ethers.Contract(contractAddress, abi, signer);
 
-    // Prepare the transaction
-    const unsignedTx = await contract.populateTransaction.mint();
+    const contractAbi = JSON.parse('[{"inputs": [],"name": "mint","outputs": [],"stateMutability": "nonpayable","type": "function"}]');
 
-    // Sign the transaction (not as a fee payer)
-    const signedTx = await signer.signTransaction(unsignedTx);
+    const contract = new web3Provider.eth.Contract(contractAbi, contractAddress);
+    const data = contract.methods.mint().encodeABI();
+
+    const tx = {
+      type: TxType.FeeDelegatedSmartContractExecution,
+      from: account,
+      to: contractAddress,
+      data: data,
+    };
+
+    // Sign the transaction
+    const signedTx = await web3Provider.eth.signTransaction(tx, account);
+    console.log("Signed transaction:", signedTx);
 
     // Send the signed transaction to our fee delegation server
-    const response = await fetch('http://localhost:3001/fee-delegation', {
+    const response = await fetch('http://localhost:3001/feedelegation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

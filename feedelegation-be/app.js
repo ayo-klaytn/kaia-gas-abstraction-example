@@ -1,14 +1,11 @@
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cors = require('cors');
-var dotenv = require('dotenv');
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const cors = require('cors');
 
-dotenv.config();
+const feedelegationRouter = require('./routes/feedelegation');
 
-var feedelegationRouter = require('./routes/feedelegation');
-
-var app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());

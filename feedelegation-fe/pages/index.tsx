@@ -26,6 +26,7 @@ export default function Home() {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
   const [txHash, setTxHash] = useState("");
+  const [error, setError] = useState("");
 
   // Create a Web3 provider instance
   let web3Provider;
@@ -35,50 +36,64 @@ export default function Home() {
   }
 
   async function mintNFT() {
+    setError("");
+    setTxHash("");
     console.log("====== Minting Wave Form NFT ======");
 
-    const accounts = await web3Provider.eth.getAccounts();
-    const account = accounts[0];
-    console.log("Using account:", account);
+    try {
+      if (!wallet || !wallet.provider) {
+        throw new Error("Wallet not connected");
+      }
 
+      const web3Provider = new Web3(wallet.provider);
 
-    const contractAbi = JSON.parse('[{"inputs": [],"name": "mint","outputs": [],"stateMutability": "nonpayable","type": "function"}]');
+      const accounts = await web3Provider.eth.getAccounts();
+      const account = accounts[0];
+      console.log("Using account:", account);
 
-    const contract = new web3Provider.eth.Contract(contractAbi, contractAddress);
-    const data = contract.methods.mint().encodeABI();
+      const contractAbi = JSON.parse('[{"inputs": [],"name": "mint","outputs": [],"stateMutability": "nonpayable","type": "function"}]');
 
-    const tx = {
-      type: TxType.FeeDelegatedSmartContractExecution,
-      from: account,
-      to: contractAddress,
-      data: data,
-    };
+      const contract = new web3Provider.eth.Contract(contractAbi, contractAddress);
+      const data = contract.methods.mint().encodeABI();
 
-    // Sign the transaction
-    const signedTx = await web3Provider.eth.signTransaction(tx, account);
-    console.log("Signed transaction:", signedTx);
+      const tx = {
+        type: TxType.FeeDelegatedSmartContractExecution,
+        from: account,
+        to: contractAddress,
+        data: data,
+        gas: 500000, // Specify a gas limit
+      };
 
-    // Send the signed transaction to our fee delegation server
-    const response = await fetch('http://localhost:3001/feedelegation', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ rawTransaction: signedTx }),
-    });
+      console.log("Transaction object:", tx);
 
-    if (!response.ok) {
-      throw new Error('Fee delegation failed');
+      // Sign the transaction
+      const signedTx = await web3Provider.eth.signTransaction(tx);
+      console.log("Signed transaction:", signedTx);
+
+      // Send the signed transaction to our fee delegation server
+      const response = await fetch('http://localhost:3001/feedelegation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rawTransaction: signedTx.raw }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error('Server response:', result);
+        throw new Error(result.message || 'Fee delegation failed');
+      }
+
+      console.log('Transaction sent:', result.transactionHash);
+      setTxHash(result.transactionHash);
+    } catch (err) {
+      console.error("Error minting NFT:", err);
+      setError(err.message);
     }
-
-    const result = await response.json();
-    console.log('Transaction sent:', result.transactionHash);
-    setTxHash(result.transactionHash);
-    // console.log(receipt);
-    // console.log(receipt.transactionHash);
-    // setTxHash(receipt.transactionHash);
   }
-
+  
   return (
     <div className={styles.container}>
       <Head>

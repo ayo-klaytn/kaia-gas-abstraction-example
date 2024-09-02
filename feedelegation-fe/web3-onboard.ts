@@ -9,6 +9,7 @@ import type { WalletInit, EIP1193Provider } from '@web3-onboard/common'
 const kaikasWallet: WalletInit = () => ({
   label: 'Kaia Wallet',
   injectedNamespace: 'klaytn', // This tells Web3 Onboard where to find the provider
+  // @ts-ignore
   checkProviderIdentity: ({ provider }) => {
     return !!provider && !!provider.isKaikas; // Check if the provider is Kaia Wallet
   },
@@ -29,6 +30,7 @@ const kaikasWallet: WalletInit = () => ({
 
 
 const injected = injectedModule({
+  // @ts-ignore
   custom: [kaikasWallet()],
 })
 

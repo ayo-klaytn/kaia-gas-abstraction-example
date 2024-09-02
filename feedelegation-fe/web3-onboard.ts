@@ -29,7 +29,6 @@ const kaikasWallet: WalletInit = () => ({
 
 
 const injected = injectedModule({
-  
   custom: [kaikasWallet()],
 })
 

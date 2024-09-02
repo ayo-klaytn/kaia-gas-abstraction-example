@@ -91,6 +91,7 @@ export default function Home() {
       setTxHash(result.transactionHash);
     } catch (err) {
       console.error("Error minting NFT:", err);
+      //@ts-ignore
       setError(err.message);
     }
   }

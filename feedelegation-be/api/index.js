@@ -3,7 +3,7 @@ const path = require('path');
 const logger = require('morgan');
 const cors = require('cors');
 
-const feedelegationRouter = require('./routes/feedelegation');
+const feedelegationRouter = require('../routes/feedelegation');
 
 const app = express();
 

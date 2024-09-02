@@ -45,6 +45,16 @@
   font-size: 4rem;
 }
 
+.nftDesc {
+  font-size: 10px;
+  padding-top: 5px;
+}
+
+.nftDescLink {
+  font-size: 10px;
+  color: #bada55 !important;
+}
+
 .title,
 .description {
   text-align: center;

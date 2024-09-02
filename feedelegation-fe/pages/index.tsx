@@ -137,6 +137,9 @@ export default function Home() {
                 Gas Abstraction
               </a>
             </h1>
+            <p className={styles.nftDesc}>Waveforms are a Dynamic Fully Onchain NFT created by using your kaia addresses 40 characters and converting them into a visual representation. </p>
+            <p className={styles.nftDesc}>Based on <a className={styles.nftDescLink} href="https://waveforms.apexdeployer.xyz/">Apex777.eth Waveforms</a> </p>
+
             <button onClick={mintNFT} className={styles.mintBtn}>
               Mint WaveForm NFT
             </button>

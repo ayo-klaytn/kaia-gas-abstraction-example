@@ -71,7 +71,8 @@ export default function Home() {
       console.log("Signed transaction:", signedTx);
 
       // Send the signed transaction to our fee delegation server
-      const response = await fetch('http://localhost:3001/feedelegation', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${API_URL}/feedelegation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

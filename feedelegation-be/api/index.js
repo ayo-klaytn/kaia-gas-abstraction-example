@@ -14,7 +14,7 @@ app.use(cors({
   origin: 'https://kaia-gas-abstraction-site.vercel.app/'
 }))
 
-app.use('/feedelegation', feedelegationRouter);
+app.use('/api/feedelegation', feedelegationRouter);
 
 app.use(function(req, res, next) {
   res.status(404).json({success: false, message: 'API not found'});

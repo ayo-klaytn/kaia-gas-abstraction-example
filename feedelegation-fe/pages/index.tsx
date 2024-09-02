@@ -51,9 +51,14 @@ export default function Home() {
       const account = accounts[0];
       console.log("Using account:", account);
 
-      const contractAbi = JSON.parse('[{"inputs": [],"name": "mint","outputs": [],"stateMutability": "nonpayable","type": "function"}]');
+      const contractAbi = JSON.parse(
+        '[{"inputs": [],"name": "mint","outputs": [],"stateMutability": "nonpayable","type": "function"}]'
+      );
 
-      const contract = new web3Provider.eth.Contract(contractAbi, contractAddress);
+      const contract = new web3Provider.eth.Contract(
+        contractAbi,
+        contractAddress
+      );
       const data = contract.methods.mint().encodeABI();
 
       const tx = {
@@ -71,23 +76,30 @@ export default function Home() {
       console.log("Signed transaction:", signedTx);
 
       // Send the signed transaction to our fee delegation server
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${API_URL}/feedelegation`, {
-        method: 'POST',
+      const API_URL =
+        process.env.NODE_ENV === "production"
+          ? "https://kaia-gas-abstraction.vercel.app/api/feedelegation"
+          : "http://localhost:3000/api/feedelegation";
+
+      const response = await fetch(API_URL, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ rawTransaction: signedTx.raw }),
       });
 
       const result = await response.json();
 
+      // Your existing logic here...
+      console.log("Processing transaction...");
+
       if (!response.ok) {
-        console.error('Server response:', result);
-        throw new Error(result.message || 'Fee delegation failed');
+        console.error("Server response:", result);
+        throw new Error(result.message || "Fee delegation failed");
       }
 
-      console.log('Transaction sent:', result.transactionHash);
+      console.log("Transaction sent:", result.transactionHash);
       setTxHash(result.transactionHash);
     } catch (err) {
       console.error("Error minting NFT:", err);
@@ -95,7 +107,7 @@ export default function Home() {
       setError(err.message);
     }
   }
-  
+
   return (
     <div className={styles.container}>
       <Head>

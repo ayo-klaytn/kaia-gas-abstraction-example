@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     console.log("Received rawTransaction:", rawTransaction);
 
     if (!rawTransaction) {
-      throw new Error("No rawTransaction provided in request body");
+      return res.status(400).json({ success: false, message: 'No rawTransaction provided in request body' });
     }
 
     const provider = new Web3.providers.HttpProvider(RPC_URL);
